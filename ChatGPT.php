@@ -18,7 +18,6 @@ class ChatGPT
     private $imageURL =  "https://api.openai.com/v1/images/generations";
 
     public $curl;       // create cURL object
-    public $data = [];  // data request array
 
     public function __construct()
     {
@@ -51,16 +50,16 @@ class ChatGPT
         curl_reset($this->curl);
         $this->initialize('text');
 
-        $this->data["model"] = $model;
-        $this->data["prompt"] = $prompt;
-        $this->data["temperature"] = $temperature;
-        $this->data["max_tokens"] = $maxTokens;
+        $data = [];
+        $data["model"] = $model;
+        $data["prompt"] = $prompt;
+        $data["temperature"] = $temperature;
+        $data["max_tokens"] = $maxTokens;
 
-        curl_setopt($this->curl, CURLOPT_POSTFIELDS, json_encode($this->data));
+        curl_setopt($this->curl, CURLOPT_POSTFIELDS, json_encode($data));
 
         $response = curl_exec($this->curl);
         $response = json_decode($response, true);
-		$this->data = array();
         return $response['choices'][0]['text'] ?? -1; // return text or -1 if error
     }
 
@@ -70,15 +69,15 @@ class ChatGPT
         curl_reset($this->curl);
         $this->initialize('image');
 
-        $this->data["prompt"] = $prompt;
-        $this->data["n"] = $numberOfImages;
-        $this->data["size"] = $imageSize;
+        $data = [];
+        $data["prompt"] = $prompt;
+        $data["n"] = $numberOfImages;
+        $data["size"] = $imageSize;
 
-        curl_setopt($this->curl, CURLOPT_POSTFIELDS, json_encode($this->data));
+        curl_setopt($this->curl, CURLOPT_POSTFIELDS, json_encode($data));
 
         $response = curl_exec($this->curl);
         $response = json_decode($response, true);
-		$this->data = array();
         return $response['data'][0]['url'] ?? -1; //return the first url or -1 if error
     }
 }
